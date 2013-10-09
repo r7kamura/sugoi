@@ -61,6 +61,54 @@ func (client *Client) GetTitlesIn(from, to time.Time) ([]*Title, error) {
 	return NewTitles(data)
 }
 
+func (client *Client) GetTitlesBefore(to time.Time) ([]*Title, error) {
+	data, err := client.Get(
+		"/db.php",
+		"Command",
+		"TitleLookup",
+		"TID",
+		"*",
+		"LastUpdate",
+		fmt.Sprintf(
+			"-%04d%02d%02d_%02d%02d%02d",
+			to.Year(),
+			to.Month(),
+			to.Day(),
+			to.Hour(),
+			to.Minute(),
+			to.Second(),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return NewTitles(data)
+}
+
+func (client *Client) GetTitlesAfter(from time.Time) ([]*Title, error) {
+	data, err := client.Get(
+		"/db.php",
+		"Command",
+		"TitleLookup",
+		"TID",
+		"*",
+		"LastUpdate",
+		fmt.Sprintf(
+			"%04d%02d%02d_%02d%02d%02d-",
+			from.Year(),
+			from.Month(),
+			from.Day(),
+			from.Hour(),
+			from.Minute(),
+			from.Second(),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return NewTitles(data)
+}
+
 func (client *Client) Get(path string, pairs ...string) ([]byte, error) {
 	response, err := http.Get(client.BaseURL + path + "?" + createURLQueryFromKeyValue(pairs...))
 	if err != nil {
