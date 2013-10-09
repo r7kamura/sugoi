@@ -1,9 +1,11 @@
 package sugoi
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 var defaultBaseURL string = "http://cal.syoboi.jp"
@@ -25,11 +27,38 @@ func (client *Client) GetTitleByID(id string) (*Title, error) {
 	if err != nil {
 		return nil, err
 	}
-	title, err := NewTitle(body)
+	titles, err := NewTitles(body)
+	return titles[0], err
+}
+
+func (client *Client) GetTitlesIn(from, to time.Time) ([]*Title, error) {
+	data, err := client.Get(
+		"/db.php",
+		"Command",
+		"TitleLookup",
+		"TID",
+		"*",
+		"LastUpdate",
+		fmt.Sprintf(
+			"%04d%02d%02d_%02d%02d%02d-%04d%02d%02d_%02d%02d%02d",
+			from.Year(),
+			from.Month(),
+			from.Day(),
+			from.Hour(),
+			from.Minute(),
+			from.Second(),
+			to.Year(),
+			to.Month(),
+			to.Day(),
+			to.Hour(),
+			to.Minute(),
+			to.Second(),
+		),
+	)
 	if err != nil {
 		return nil, err
 	}
-	return title, nil
+	return NewTitles(data)
 }
 
 func (client *Client) Get(path string, pairs ...string) ([]byte, error) {

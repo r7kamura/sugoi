@@ -25,44 +25,47 @@ type Title struct {
 	UserPointRank string
 }
 
-func NewTitle(data []byte) (title *Title, err error) {
-	return NewTitleParser(data).Parse()
+func NewTitles(data []byte) ([]*Title, error) {
+	return NewTitlesParser(data).Parse()
 }
 
-type TitleParser struct {
+type TitlesParser struct {
 	Data []byte
 }
 
-func NewTitleParser(data []byte) *TitleParser {
-	return &TitleParser{Data: data}
+func NewTitlesParser(data []byte) *TitlesParser {
+	return &TitlesParser{Data: data}
 }
 
-func (parser *TitleParser) Parse() (title *Title, err error) {
+func (parser *TitlesParser) Parse() (titles []*Title, err error) {
 	response, err := parser.TitleLookupResponse()
-	title = &Title{
-		Cat:           response.TitleItems.TitleItem.Cat,
-		Comment:       response.TitleItems.TitleItem.Comment,
-		FirstCh:       response.TitleItems.TitleItem.FirstCh,
-		FirstEndMonth: response.TitleItems.TitleItem.FirstEndMonth,
-		FirstEndYear:  response.TitleItems.TitleItem.FirstEndYear,
-		FirstMonth:    response.TitleItems.TitleItem.FirstMonth,
-		FirstYear:     response.TitleItems.TitleItem.FirstYear,
-		Keywords:      response.TitleItems.TitleItem.Keywords,
-		LastUpdate:    response.TitleItems.TitleItem.LastUpdate,
-		ShortTitle:    response.TitleItems.TitleItem.ShortTitle,
-		SubTitles:     response.TitleItems.TitleItem.SubTitles,
-		TID:           response.TitleItems.TitleItem.TID,
-		Title:         response.TitleItems.TitleItem.Title,
-		TitleEN:       response.TitleItems.TitleItem.TitleEN,
-		TitleFlag:     response.TitleItems.TitleItem.TitleFlag,
-		TitleYomi:     response.TitleItems.TitleItem.TitleYomi,
-		UserPoint:     response.TitleItems.TitleItem.UserPoint,
-		UserPointRank: response.TitleItems.TitleItem.UserPointRank,
+	titles = make([]*Title, len(response.TitleItems.TitleItem))
+	for i, titleItem := range response.TitleItems.TitleItem {
+		titles[i] = &Title{
+			Cat:           titleItem.Cat,
+			Comment:       titleItem.Comment,
+			FirstCh:       titleItem.FirstCh,
+			FirstEndMonth: titleItem.FirstEndMonth,
+			FirstEndYear:  titleItem.FirstEndYear,
+			FirstMonth:    titleItem.FirstMonth,
+			FirstYear:     titleItem.FirstYear,
+			Keywords:      titleItem.Keywords,
+			LastUpdate:    titleItem.LastUpdate,
+			ShortTitle:    titleItem.ShortTitle,
+			SubTitles:     titleItem.SubTitles,
+			TID:           titleItem.TID,
+			Title:         titleItem.Title,
+			TitleEN:       titleItem.TitleEN,
+			TitleFlag:     titleItem.TitleFlag,
+			TitleYomi:     titleItem.TitleYomi,
+			UserPoint:     titleItem.UserPoint,
+			UserPointRank: titleItem.UserPointRank,
+		}
 	}
 	return
 }
 
-func (parser *TitleParser) TitleLookupResponse() (*titleLookupResponse, error) {
+func (parser *TitlesParser) TitleLookupResponse() (*titleLookupResponse, error) {
 	var response titleLookupResponse
 	return &response, xml.Unmarshal(parser.Data, &response)
 }
@@ -72,7 +75,7 @@ type titleLookupResponse struct {
 }
 
 type titleItems struct {
-	TitleItem titleItem `xml:"TitleItem"`
+	TitleItem []titleItem `xml:"TitleItem"`
 }
 
 type titleItem struct {
