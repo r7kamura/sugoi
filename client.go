@@ -23,16 +23,15 @@ func NewClientWithBaseURL(baseURL string) *Client {
 }
 
 func (client *Client) GetTitleByID(id string) (*Title, error) {
-	body, err := client.Get("/db.php", "TID", id, "Command", "TitleLookup")
+	titles, err := client.GetTitles("/db.php", "TID", id, "Command", "TitleLookup")
 	if err != nil {
 		return nil, err
 	}
-	titles, err := NewTitles(body)
-	return titles[0], err
+	return titles[0], nil
 }
 
 func (client *Client) GetTitlesIn(from, to time.Time) ([]*Title, error) {
-	data, err := client.Get(
+	return client.GetTitles(
 		"/db.php",
 		"Command",
 		"TitleLookup",
@@ -55,14 +54,10 @@ func (client *Client) GetTitlesIn(from, to time.Time) ([]*Title, error) {
 			to.Second(),
 		),
 	)
-	if err != nil {
-		return nil, err
-	}
-	return NewTitles(data)
 }
 
 func (client *Client) GetTitlesBefore(to time.Time) ([]*Title, error) {
-	data, err := client.Get(
+	return client.GetTitles(
 		"/db.php",
 		"Command",
 		"TitleLookup",
@@ -79,14 +74,10 @@ func (client *Client) GetTitlesBefore(to time.Time) ([]*Title, error) {
 			to.Second(),
 		),
 	)
-	if err != nil {
-		return nil, err
-	}
-	return NewTitles(data)
 }
 
 func (client *Client) GetTitlesAfter(from time.Time) ([]*Title, error) {
-	data, err := client.Get(
+	return client.GetTitles(
 		"/db.php",
 		"Command",
 		"TitleLookup",
@@ -103,6 +94,10 @@ func (client *Client) GetTitlesAfter(from time.Time) ([]*Title, error) {
 			from.Second(),
 		),
 	)
+}
+
+func (client *Client) GetTitles(path string, pairs ...string) ([]*Title, error) {
+	data, err := client.Get(path, pairs...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,11 +109,7 @@ func (client *Client) Get(path string, pairs ...string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	data, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	return ioutil.ReadAll(response.Body)
 }
 
 func createURLQueryFromKeyValue(pairs ...string) string {
