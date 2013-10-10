@@ -34,7 +34,11 @@ func (builder *TitleQueryBuilder) Build() (string, error) {
 }
 
 func (builder *TitleQueryBuilder) TID() string {
-	return builder.Options["id"]
+	if id := builder.Options["id"]; id != "" {
+		return id
+	} else {
+		return "*"
+	}
 }
 
 func (builder *TitleQueryBuilder) LastUpdate() (string, error) {

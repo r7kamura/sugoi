@@ -129,10 +129,24 @@ func TestClient(t *testing.T) {
 
 	Describe(t, "func (*Client) GetTitles(...string) ([]*Title, error)", func() {
 		Context("with updatedFrom and updatedTo", func() {
-			It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=:updatedFrom-:updatedTo", func() {
+			It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=:updatedFrom-:updatedTo&TID=*", func() {
 				client.GetTitles("updatedFrom", "2000-01-01T00:00:00+09:00", "updatedTo", "2000-01-02T00:00:00+09:00")
 				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=20000101_000000-20000102_000000")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=20000101_000000-20000102_000000&TID=%2A")
+			})
+		})
+
+		Context("with updatedFrom", func() {
+			It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=:updatedFrom-&TID=*", func() {
+				client.GetTitles("updatedFrom", "2000-01-01T00:00:00+09:00")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=20000101_000000-&TID=%2A")
+			})
+		})
+
+		Context("with updatedTo", func() {
+			It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=-:updatedTo&TID=*", func() {
+				client.GetTitles("updatedTo", "2000-01-02T00:00:00+09:00")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=-20000102_000000&TID=%2A")
 			})
 		})
 
