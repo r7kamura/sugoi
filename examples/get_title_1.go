@@ -9,22 +9,22 @@ func main() {
 	client := sugoi.NewClient()
 	title, _ := client.GetTitleByID("1")
 	fmt.Println(
-		title.Cat,
+		title.CategoryID,
 		title.Comment,
-		title.FirstCh,
+		title.FirstChannel,
 		title.FirstEndMonth,
 		title.FirstEndYear,
 		title.FirstMonth,
 		title.FirstYear,
+		title.ID,
 		title.Keywords,
-		title.LastUpdate,
 		title.ShortTitle,
 		title.SubTitles,
-		title.TID,
 		title.Title,
-		title.TitleEN,
+		title.TitleEnglish,
 		title.TitleFlag,
 		title.TitleYomi,
+		title.UpdatedAt,
 		title.UserPoint,
 		title.UserPointRank,
 	)
