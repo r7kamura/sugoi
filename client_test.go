@@ -49,7 +49,10 @@ func TestClient(t *testing.T) {
 				time.Date(2000, 1, 2, 0, 0, 0, 0, jst),
 			)
 			Expect(currentRequest.URL.Path).To(Equal, "/db.php")
-			Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=20000101_000000-20000102_000000&TID=%2A")
+			Expect(currentRequest.URL.RawQuery).To(
+				Equal,
+				"Command=TitleLookup&LastUpdate=20000101_000000-20000102_000000&TID=%2A",
+			)
 		})
 	})
 
