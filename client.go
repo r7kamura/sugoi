@@ -110,6 +110,30 @@ func (client *Client) GetProgramByID(id string) (*Program, error) {
 	return programs[0], err
 }
 
+func (client *Client) GetProgramsPlayedIn(from, to time.Time) ([]*Program, error) {
+	return client.GetPrograms(
+		"/db.php",
+		"Command",
+		"ProgLookup",
+		"Range",
+		fmt.Sprintf(
+			"%04d%02d%02d_%02d%02d%02d-%04d%02d%02d_%02d%02d%02d",
+			from.Year(),
+			from.Month(),
+			from.Day(),
+			from.Hour(),
+			from.Minute(),
+			from.Second(),
+			to.Year(),
+			to.Month(),
+			to.Day(),
+			to.Hour(),
+			to.Minute(),
+			to.Second(),
+		),
+	)
+}
+
 func (client *Client) GetTitles(path string, pairs ...string) ([]*Title, error) {
 	data, err := client.Get(path, pairs...)
 	if err != nil {

@@ -190,4 +190,19 @@ func TestClient(t *testing.T) {
 			Expect(program.Warning).To(Equal, "1")
 		})
 	})
+
+	Describe(t, "func (*Client) GetProgramsPlayedIn(from, to *time.Time) ([]*Program, error)", func() {
+		It("sends a GET request to /db.php?Command=ProgLookup&Range=:from-:to", func() {
+			jst := time.FixedZone("JST", 0)
+			client.GetProgramsPlayedIn(
+				time.Date(2000, 1, 1, 0, 0, 0, 0, jst),
+				time.Date(2000, 1, 2, 0, 0, 0, 0, jst),
+			)
+			Expect(currentRequest.URL.Path).To(Equal, "/db.php")
+			Expect(currentRequest.URL.RawQuery).To(
+				Equal,
+				"Command=ProgLookup&Range=20000101_000000-20000102_000000",
+			)
+		})
+	})
 }
