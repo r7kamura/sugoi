@@ -1,5 +1,5 @@
 # Sugoi
-Sugoi is a client library for [http://cal.syoboi.jp/](http://cal.syoboi.jp/) written in Golang.
+Sugoi client library for [http://cal.syoboi.jp/](http://cal.syoboi.jp/) written in Golang.
 
 ## Install
 ```
