@@ -27,6 +27,9 @@ func (client *Client) GetTitleByID(id string) (*Title, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(titles) == 0 {
+		return nil, &NotFoundError{}
+	}
 	return titles[0], nil
 }
 
@@ -96,12 +99,31 @@ func (client *Client) GetTitlesAfter(from time.Time) ([]*Title, error) {
 	)
 }
 
+func (client *Client) GetProgramByID(id string) (*Program, error) {
+	programs, err := client.GetPrograms("/db.php", "Command", "ProgLookup", "PID", id)
+	if err != nil {
+		return nil, err
+	}
+	if len(programs) == 0 {
+		return nil, &NotFoundError{}
+	}
+	return programs[0], err
+}
+
 func (client *Client) GetTitles(path string, pairs ...string) ([]*Title, error) {
 	data, err := client.Get(path, pairs...)
 	if err != nil {
 		return nil, err
 	}
 	return NewTitles(data)
+}
+
+func (client *Client) GetPrograms(path string, pairs ...string) ([]*Program, error) {
+	data, err := client.Get(path, pairs...)
+	if err != nil {
+		return nil, err
+	}
+	return NewPrograms(data)
 }
 
 func (client *Client) Get(path string, pairs ...string) ([]byte, error) {
@@ -118,4 +140,10 @@ func createURLQueryFromKeyValue(pairs ...string) string {
 		values.Add(pairs[i], pairs[i + 1])
 	}
 	return values.Encode()
+}
+
+type NotFoundError struct {}
+
+func (error *NotFoundError) Error() string {
+	return "Not Found"
 }
