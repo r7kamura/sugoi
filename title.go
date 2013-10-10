@@ -37,9 +37,12 @@ func NewTitlesParser(data []byte) *TitlesParser {
 	return &TitlesParser{Data: data}
 }
 
-func (parser *TitlesParser) Parse() (titles []*Title, err error) {
+func (parser *TitlesParser) Parse() ([]*Title, error) {
 	response, err := parser.TitleLookupResponse()
-	titles = make([]*Title, len(response.TitleItems.TitleItem))
+	if err != nil {
+		return nil, err
+	}
+	titles := make([]*Title, len(response.TitleItems.TitleItem))
 	for i, titleItem := range response.TitleItems.TitleItem {
 		titles[i] = &Title{
 			Cat:           titleItem.Cat,
@@ -62,7 +65,7 @@ func (parser *TitlesParser) Parse() (titles []*Title, err error) {
 			UserPointRank: titleItem.UserPointRank,
 		}
 	}
-	return
+	return titles, nil
 }
 
 func (parser *TitlesParser) TitleLookupResponse() (*titleLookupResponse, error) {
