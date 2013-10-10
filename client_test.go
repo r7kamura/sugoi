@@ -8,6 +8,39 @@ import (
 	"time"
 )
 
+var exampleXML string = `
+<?xml version="1.0" encoding="UTF-8"?>
+<TitleLookupResponse>
+	<Result>
+		<Code>200</Code>
+		<Message>
+		</Message>
+	</Result>
+	<TitleItems>
+		<TitleItem id="1">
+			<TID>1</TID>
+			<LastUpdate>2000-01-01 00:00:00</LastUpdate>
+			<Title>タイトル</Title>
+			<ShortTitle>ShortTitle</ShortTitle>
+			<TitleYomi>TitleYomi</TitleYomi>
+			<TitleEN>TitleEN</TitleEN>
+			<Comment>Comment</Comment>
+			<Cat>1</Cat>
+			<TitleFlag>0</TitleFlag>
+			<FirstYear>2000</FirstYear>
+			<FirstMonth>1</FirstMonth>
+			<FirstEndYear>2000</FirstEndYear>
+			<FirstEndMonth>1</FirstEndMonth>
+			<FirstCh>FirstCh</FirstCh>
+			<Keywords>Keywords</Keywords>
+			<UserPoint>1</UserPoint>
+			<UserPointRank>1</UserPointRank>
+			<SubTitles>SubTitles</SubTitles>
+		</TitleItem>
+	</TitleItems>
+</TitleLookupResponse>
+`
+
 func TestClient(t *testing.T) {
 	var currentRequest *http.Request
 	server := httptest.NewServer(
