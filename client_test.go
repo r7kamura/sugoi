@@ -191,18 +191,34 @@ func TestClient(t *testing.T) {
 		})
 	})
 
-	Describe(t, "func (*Client) GetProgramsPlayedIn(from, to *time.Time) ([]*Program, error)", func() {
-		It("sends a GET request to /db.php?Command=ProgLookup&Range=:from-:to", func() {
-			jst := time.FixedZone("JST", 0)
-			client.GetProgramsPlayedIn(
-				time.Date(2000, 1, 1, 0, 0, 0, 0, jst),
-				time.Date(2000, 1, 2, 0, 0, 0, 0, jst),
-			)
-			Expect(currentRequest.URL.Path).To(Equal, "/db.php")
-			Expect(currentRequest.URL.RawQuery).To(
-				Equal,
-				"Command=ProgLookup&Range=20000101_000000-20000102_000000",
-			)
+	Describe(t, "func (*Client) GetPrograms(...string) ([]*Program, error)", func() {
+		Context("with from and to", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&Range=:from-:to", func() {
+				client.GetPrograms("from", "2000-01-01T00:00:00+09:00", "to", "2000-01-02T00:00:00+09:00")
+				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&Range=20000101_000000-20000102_000000")
+			})
+		})
+
+		Context("with from", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&Range=:from-", func() {
+				client.GetPrograms("from", "2000-01-01T00:00:00+09:00")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&Range=20000101_000000-")
+			})
+		})
+
+		Context("with to", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&Range=-:to", func() {
+				client.GetPrograms("to", "2000-01-02T00:00:00+09:00")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&Range=-20000102_000000")
+			})
+		})
+
+		Context("with id", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&PID=:id", func() {
+				client.GetPrograms("id", "1")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&PID=1")
+			})
 		})
 	})
 }

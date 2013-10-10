@@ -100,7 +100,7 @@ func (client *Client) GetTitlesUpdatedAfter(from time.Time) ([]*Title, error) {
 }
 
 func (client *Client) GetProgramByID(id string) (*Program, error) {
-	programs, err := client.GetPrograms("/db.php", "Command", "ProgLookup", "PID", id)
+	programs, err := client.GetPrograms("Command", "ProgLookup", "id", id)
 	if err != nil {
 		return nil, err
 	}
@@ -108,30 +108,6 @@ func (client *Client) GetProgramByID(id string) (*Program, error) {
 		return nil, &NotFoundError{}
 	}
 	return programs[0], err
-}
-
-func (client *Client) GetProgramsPlayedIn(from, to time.Time) ([]*Program, error) {
-	return client.GetPrograms(
-		"/db.php",
-		"Command",
-		"ProgLookup",
-		"Range",
-		fmt.Sprintf(
-			"%04d%02d%02d_%02d%02d%02d-%04d%02d%02d_%02d%02d%02d",
-			from.Year(),
-			from.Month(),
-			from.Day(),
-			from.Hour(),
-			from.Minute(),
-			from.Second(),
-			to.Year(),
-			to.Month(),
-			to.Day(),
-			to.Hour(),
-			to.Minute(),
-			to.Second(),
-		),
-	)
 }
 
 func (client *Client) GetTitles(path string, pairs ...string) ([]*Title, error) {
@@ -142,8 +118,16 @@ func (client *Client) GetTitles(path string, pairs ...string) ([]*Title, error) 
 	return NewTitles(data)
 }
 
-func (client *Client) GetPrograms(path string, pairs ...string) ([]*Program, error) {
-	data, err := client.Get(path, pairs...)
+func (client *Client) GetPrograms(pairs ...string) ([]*Program, error) {
+	query, err := NewProgramQueryBuilder(pairs...).Build()
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.Get(client.BaseURL + "/db.php" + "?" + query)
+	if err != nil {
+		return nil, err
+	}
+	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +152,94 @@ func createURLQueryFromKeyValue(pairs ...string) string {
 
 type NotFoundError struct {}
 
+// Returned from GetXXXByID functions.
 func (error *NotFoundError) Error() string {
 	return "Not Found"
+}
+
+// Utility type to convert string map to URL query.
+type ProgramsQueryBuilder struct {
+	Options map[string]string
+}
+
+// Creates a builder, converting key-value pairs to map[string]string.
+func NewProgramQueryBuilder(pairs ...string) *ProgramsQueryBuilder {
+	options := map[string]string{}
+	for i := 0; i + 1 < len(pairs); i += 2 {
+		options[pairs[i]] = pairs[i + 1]
+	}
+	return &ProgramsQueryBuilder{Options: options}
+}
+
+// Returns built query string.
+func (builder *ProgramsQueryBuilder) Build() (string, error) {
+	fromAndTo, err := builder.FromAndTo()
+	if err != nil {
+		return "", err
+	}
+	table := map[string]string {
+		"Command": "ProgLookup",
+		"Range": fromAndTo,
+		"PID": builder.ID(),
+	}
+	values := url.Values{}
+	for key, value := range table {
+		if value != "" {
+			values.Set(key, value)
+		}
+	}
+	return values.Encode(), nil
+}
+
+// Returns ID.
+func (builder *ProgramsQueryBuilder) ID() string {
+	return builder.Options["id"]
+}
+
+// Returns cal.syoboi.jp formatted :from-:to.
+func (builder *ProgramsQueryBuilder) FromAndTo() (string, error) {
+	from, err := builder.From()
+	if err != nil {
+		return "", err
+	}
+	to, err := builder.To()
+	if err != nil {
+		return "", err
+	}
+	if from != "" || to != "" {
+		return from + "-" + to, nil
+	} else {
+		return "", nil
+	}
+}
+
+// Returns cal.syoboi.jp formatted "from" string.
+func (builder *ProgramsQueryBuilder) From() (string, error) {
+	return builder.FromOrTo("from")
+}
+
+// Returns cal.syoboi.jp formatted "to" string.
+func (builder *ProgramsQueryBuilder) To() (string, error) {
+	return builder.FromOrTo("to")
+}
+
+// Converts RFC3339 formatted time to cal.syoboi.jp formatted time.
+func (builder *ProgramsQueryBuilder) FromOrTo(key string) (string, error) {
+	if str, ok := builder.Options[key]; ok {
+		time, err := time.Parse(time.RFC3339, str)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(
+			"%04d%02d%02d_%02d%02d%02d",
+			time.Year(),
+			time.Month(),
+			time.Day(),
+			time.Hour(),
+			time.Minute(),
+			time.Second(),
+		), nil
+	} else {
+		return "", nil
+	}
 }
