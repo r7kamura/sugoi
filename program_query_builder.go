@@ -19,9 +19,14 @@ func (builder *ProgramQueryBuilder) Build() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	stTime, err := builder.StTime()
+	if err != nil {
+		return "", err
+	}
 	table := map[string]string {
 		"Command": "ProgLookup",
 		"Range": playedRange,
+		"StTime": stTime,
 		"PID": builder.ID(),
 	}
 	values := url.Values{}
@@ -35,6 +40,22 @@ func (builder *ProgramQueryBuilder) Build() (string, error) {
 
 func (builder *ProgramQueryBuilder) ID() string {
 	return builder.Options["id"]
+}
+
+func (builder *ProgramQueryBuilder) StTime() (string, error) {
+	to, err := builder.StartedTo()
+	if err != nil {
+		return "", err
+	}
+	if to == "" {
+		return "", nil
+	} else {
+		return "-" + to, nil
+	}
+}
+
+func (builder *ProgramQueryBuilder) StartedTo() (string, error) {
+	return builder.FormattedTimeOf("startedTo")
 }
 
 func (builder *ProgramQueryBuilder) PlayedRange() (string, error) {

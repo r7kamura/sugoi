@@ -213,6 +213,13 @@ func TestClient(t *testing.T) {
 			})
 		})
 
+		Context("with startedTo", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&StTime=-:startedTo", func() {
+				client.GetPrograms("startedTo", "2000-01-02T00:00:00+09:00")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&StTime=-20000102_000000")
+			})
+		})
+
 		Context("with id", func() {
 			It("sends a GET request to /db.php?Command=ProgLookup&PID=:id", func() {
 				client.GetPrograms("id", "1")
