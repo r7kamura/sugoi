@@ -261,5 +261,15 @@ func TestClient(t *testing.T) {
 				)
 			})
 		})
+
+		Context("with count", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&Count=:count", func() {
+				client.GetPrograms("count", "1")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup&Count=1&JOIN=SubTitles",
+				)
+			})
+		})
 	})
 }
