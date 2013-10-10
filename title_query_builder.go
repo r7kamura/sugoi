@@ -7,11 +7,7 @@ type TitleQueryBuilder struct {
 }
 
 func NewTitleQueryBuilder(pairs ...string) *TitleQueryBuilder {
-	options := map[string]string{}
-	for i := 0; i + 1 < len(pairs); i += 2 {
-		options[pairs[i]] = pairs[i + 1]
-	}
-	return &TitleQueryBuilder{Options: options}
+	return &TitleQueryBuilder{Options: convertKeyValuePairsToHash(pairs...)}
 }
 
 func (builder *TitleQueryBuilder) Build() (string, error) {

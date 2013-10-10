@@ -7,11 +7,7 @@ type ProgramQueryBuilder struct {
 }
 
 func NewProgramQueryBuilder(pairs ...string) *ProgramQueryBuilder {
-	options := map[string]string{}
-	for i := 0; i + 1 < len(pairs); i += 2 {
-		options[pairs[i]] = pairs[i + 1]
-	}
-	return &ProgramQueryBuilder{Options: options}
+	return &ProgramQueryBuilder{Options: convertKeyValuePairsToHash(pairs...)}
 }
 
 func (builder *ProgramQueryBuilder) Build() (string, error) {

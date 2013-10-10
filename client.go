@@ -96,3 +96,11 @@ func convertRFC3339ToSyoboiFormat(str string) (string, error) {
 		time.Second(),
 	), nil
 }
+
+func convertKeyValuePairsToHash(pairs ...string) map[string]string {
+	hash := map[string]string{}
+	for i := 0; i + 1 < len(pairs); i += 2 {
+		hash[pairs[i]] = pairs[i + 1]
+	}
+	return hash
+}
