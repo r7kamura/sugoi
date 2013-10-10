@@ -1,8 +1,6 @@
 package sugoi
 
-import (
-	"encoding/xml"
-)
+import "encoding/xml"
 
 type Program struct {
 	ChannelID      string
