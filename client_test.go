@@ -160,10 +160,10 @@ func TestClient(t *testing.T) {
 
 	Describe(t, "func (*Client) GetProgramByID(id string) (*Program, error)", func() {
 		Context("with id", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&PID=:id", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&PID=:id", func() {
 				client.GetProgramByID("1")
 				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&PID=1")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&JOIN=SubTitles&PID=1")
 			})
 		})
 
@@ -192,45 +192,73 @@ func TestClient(t *testing.T) {
 
 	Describe(t, "func (*Client) GetPrograms(...string) ([]*Program, error)", func() {
 		Context("with playedFrom and playedTo", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&Range=:playedFrom-:playedTo", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&Range=:playedFrom-:playedTo", func() {
 				client.GetPrograms("playedFrom", "2000-01-01T00:00:00+09:00", "playedTo", "2000-01-02T00:00:00+09:00")
 				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&Range=20000101_000000-20000102_000000")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup&JOIN=SubTitles&Range=20000101_000000-20000102_000000",
+				)
 			})
 		})
 
 		Context("with playedFrom", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&Range=:playedFrom-", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&Range=:playedFrom-", func() {
 				client.GetPrograms("playedFrom", "2000-01-01T00:00:00+09:00")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&Range=20000101_000000-")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup&JOIN=SubTitles&Range=20000101_000000-",
+				)
 			})
 		})
 
 		Context("with playedTo", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&Range=-:playedTo", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&Range=-:playedTo", func() {
 				client.GetPrograms("playedTo", "2000-01-02T00:00:00+09:00")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&Range=-20000102_000000")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup&JOIN=SubTitles&Range=-20000102_000000",
+				)
 			})
 		})
 
 		Context("with startedTo", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&StTime=-:startedTo", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&StTime=-:startedTo", func() {
 				client.GetPrograms("startedTo", "2000-01-02T00:00:00+09:00")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&StTime=-20000102_000000")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup&JOIN=SubTitles&StTime=-20000102_000000",
+				)
 			})
 		})
 
 		Context("with channelID", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&ChID=:channelID", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&ChID=:channelID", func() {
 				client.GetPrograms("channelID", "1")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "ChID=1&Command=ProgLookup")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"ChID=1&Command=ProgLookup&JOIN=SubTitles",
+				)
 			})
 		})
 
 		Context("with id", func() {
-			It("sends a GET request to /db.php?Command=ProgLookup&PID=:id", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&JOIN=SubTitles&PID=:id", func() {
 				client.GetPrograms("id", "1")
-				Expect(currentRequest.URL.RawQuery).To(Equal, "Command=ProgLookup&PID=1")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup&JOIN=SubTitles&PID=1",
+				)
+			})
+		})
+
+		Context("with join=0", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup", func() {
+				client.GetPrograms("join", "0")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ProgLookup",
+				)
 			})
 		})
 	})

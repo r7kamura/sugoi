@@ -26,6 +26,7 @@ func (builder *ProgramQueryBuilder) Build() (string, error) {
 	table := map[string]string {
 		"ChID": builder.ChID(),
 		"Command": "ProgLookup",
+		"JOIN": builder.Join(),
 		"PID": builder.ID(),
 		"Range": playedRange,
 		"StTime": stTime,
@@ -45,6 +46,14 @@ func (builder *ProgramQueryBuilder) ID() string {
 
 func (builder *ProgramQueryBuilder) ChID() string {
 	return builder.Options["channelID"]
+}
+
+func (builder *ProgramQueryBuilder) Join() string {
+	if builder.Options["join"] == "0" {
+		return ""
+	} else {
+		return "SubTitles"
+	}
 }
 
 func (builder *ProgramQueryBuilder) StTime() (string, error) {
