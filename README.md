@@ -7,6 +7,8 @@ go get github.com/r7kamura/sugoi
 ```
 
 ## Usage
+See test files for more examples.
+
 ```go
 package main
 
