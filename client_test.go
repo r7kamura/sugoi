@@ -2,55 +2,59 @@ package sugoi
 
 import (
 	. "github.com/r7kamura/gospel"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 )
 
-var exampleXML string = `
-<?xml version="1.0" encoding="UTF-8"?>
-<TitleLookupResponse>
-	<Result>
-		<Code>200</Code>
-		<Message>
-		</Message>
-	</Result>
-	<TitleItems>
-		<TitleItem id="1">
-			<TID>1</TID>
-			<LastUpdate>2000-01-01 00:00:00</LastUpdate>
-			<Title>タイトル</Title>
-			<ShortTitle>ShortTitle</ShortTitle>
-			<TitleYomi>TitleYomi</TitleYomi>
-			<TitleEN>TitleEN</TitleEN>
-			<Comment>Comment</Comment>
-			<Cat>1</Cat>
-			<TitleFlag>0</TitleFlag>
-			<FirstYear>2000</FirstYear>
-			<FirstMonth>1</FirstMonth>
-			<FirstEndYear>2000</FirstEndYear>
-			<FirstEndMonth>1</FirstEndMonth>
-			<FirstCh>FirstCh</FirstCh>
-			<Keywords>Keywords</Keywords>
-			<UserPoint>1</UserPoint>
-			<UserPointRank>1</UserPointRank>
-			<SubTitles>SubTitles</SubTitles>
-		</TitleItem>
-	</TitleItems>
-</TitleLookupResponse>
-`
+var currentRequest *http.Request
+
+type testHandler struct {}
+
+func (handler *testHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	currentRequest = request
+	switch request.URL.Query().Get("Command") {
+	case "TitleLookup":
+		fmt.Fprint(
+			writer,
+			`<?xml version="1.0" encoding="UTF-8"?>
+			<TitleLookupResponse>
+				<Result>
+					<Code>200</Code>
+					<Message>
+					</Message>
+				</Result>
+				<TitleItems>
+					<TitleItem id="1">
+						<TID>1</TID>
+						<LastUpdate>2000-01-01 00:00:00</LastUpdate>
+						<Title>タイトル</Title>
+						<ShortTitle>ShortTitle</ShortTitle>
+						<TitleYomi>TitleYomi</TitleYomi>
+						<TitleEN>TitleEN</TitleEN>
+						<Comment>Comment</Comment>
+						<Cat>1</Cat>
+						<TitleFlag>0</TitleFlag>
+						<FirstYear>2000</FirstYear>
+						<FirstMonth>1</FirstMonth>
+						<FirstEndYear>2000</FirstEndYear>
+						<FirstEndMonth>1</FirstEndMonth>
+						<FirstCh>FirstCh</FirstCh>
+						<Keywords>Keywords</Keywords>
+						<UserPoint>1</UserPoint>
+						<UserPointRank>1</UserPointRank>
+						<SubTitles>SubTitles</SubTitles>
+					</TitleItem>
+				</TitleItems>
+			</TitleLookupResponse>`,
+		)
+	}
+}
 
 func TestClient(t *testing.T) {
-	var currentRequest *http.Request
-	server := httptest.NewServer(
-		http.HandlerFunc(
-			func(writer http.ResponseWriter, request *http.Request) {
-				currentRequest = request
-				writer.Write([]byte(exampleXML))
-			},
-		),
-	)
+	server := httptest.NewServer(&testHandler{})
 	defer server.Close()
 	client := NewClientWithBaseURL(server.URL)
 
