@@ -220,6 +220,13 @@ func TestClient(t *testing.T) {
 			})
 		})
 
+		Context("with channelID", func() {
+			It("sends a GET request to /db.php?Command=ProgLookup&ChID=:channelID", func() {
+				client.GetPrograms("channelID", "1")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "ChID=1&Command=ProgLookup")
+			})
+		})
+
 		Context("with id", func() {
 			It("sends a GET request to /db.php?Command=ProgLookup&PID=:id", func() {
 				client.GetPrograms("id", "1")

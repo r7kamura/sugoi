@@ -24,10 +24,11 @@ func (builder *ProgramQueryBuilder) Build() (string, error) {
 		return "", err
 	}
 	table := map[string]string {
+		"ChID": builder.ChID(),
 		"Command": "ProgLookup",
+		"PID": builder.ID(),
 		"Range": playedRange,
 		"StTime": stTime,
-		"PID": builder.ID(),
 	}
 	values := url.Values{}
 	for key, value := range table {
@@ -40,6 +41,10 @@ func (builder *ProgramQueryBuilder) Build() (string, error) {
 
 func (builder *ProgramQueryBuilder) ID() string {
 	return builder.Options["id"]
+}
+
+func (builder *ProgramQueryBuilder) ChID() string {
+	return builder.Options["channelID"]
 }
 
 func (builder *ProgramQueryBuilder) StTime() (string, error) {
