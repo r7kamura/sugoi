@@ -46,3 +46,20 @@ func main() {
 	)
 }
 ```
+
+## Features
+Supported request examples:
+
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&ChID=:channelID
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&Count=:count
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&PID=:id
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&PID=:id
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&Range=-:playedTo
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&Range=:playedFrom-
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&Range=:playedFrom-:playedTo
+* GET http://cal.syoboi.jp/db.php?Command=ProgLookup&JOIN=SubTitles&StTime=-:startedTo
+* GET http://cal.syoboi.jp/db.php?Command=TitleLookup&LastUpdate=-:updatedTo&TID=*
+* GET http://cal.syoboi.jp/db.php?Command=TitleLookup&LastUpdate=:updatedFrom-&TID=*
+* GET http://cal.syoboi.jp/db.php?Command=TitleLookup&LastUpdate=:updatedFrom-:updatedTo&TID=*
+* GET http://cal.syoboi.jp/db.php?Command=TitleLookup&TID=:id
