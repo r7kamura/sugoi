@@ -130,10 +130,10 @@ func TestClient(t *testing.T) {
 		})
 	})
 
-	Describe(t, "func (*Client) GetTitlesIn(from, to *time.Time) ([]*Title, error)", func() {
+	Describe(t, "func (*Client) GetTitlesUpdatedIn(from, to *time.Time) ([]*Title, error)", func() {
 		It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=:from-:to&TID=*", func() {
 			jst := time.FixedZone("JST", 0)
-			client.GetTitlesIn(
+			client.GetTitlesUpdatedIn(
 				time.Date(2000, 1, 1, 0, 0, 0, 0, jst),
 				time.Date(2000, 1, 2, 0, 0, 0, 0, jst),
 			)
@@ -145,19 +145,19 @@ func TestClient(t *testing.T) {
 		})
 	})
 
-	Describe(t, "func (*Client) GetTitlesBefore(to *time.Time) ([]*Title, error)", func() {
+	Describe(t, "func (*Client) GetTitlesUpdatedBefore(to *time.Time) ([]*Title, error)", func() {
 		It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=-:to&TID=*", func() {
 			jst := time.FixedZone("JST", 0)
-			client.GetTitlesBefore(time.Date(2000, 1, 1, 0, 0, 0, 0, jst))
+			client.GetTitlesUpdatedBefore(time.Date(2000, 1, 1, 0, 0, 0, 0, jst))
 			Expect(currentRequest.URL.Path).To(Equal, "/db.php")
 			Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=-20000101_000000&TID=%2A")
 		})
 	})
 
-	Describe(t, "func (*Client) GetTitlesAfter(from *time.Time) ([]*Title, error)", func() {
+	Describe(t, "func (*Client) GetTitlesUpdatedAfter(from *time.Time) ([]*Title, error)", func() {
 		It("sends a GET request to /db.php?Command=TitleLookup&LastUpdate=:from-&TID=*", func() {
 			jst := time.FixedZone("JST", 0)
-			client.GetTitlesAfter(time.Date(2000, 1, 1, 0, 0, 0, 0, jst))
+			client.GetTitlesUpdatedAfter(time.Date(2000, 1, 1, 0, 0, 0, 0, jst))
 			Expect(currentRequest.URL.Path).To(Equal, "/db.php")
 			Expect(currentRequest.URL.RawQuery).To(Equal, "Command=TitleLookup&LastUpdate=20000101_000000-&TID=%2A")
 		})

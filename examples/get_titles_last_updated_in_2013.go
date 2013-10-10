@@ -9,7 +9,7 @@ import (
 func main() {
 	client := sugoi.NewClient()
 	jst := time.FixedZone("JST", 0)
-	titles, _ := client.GetTitlesIn(
+	titles, _ := client.GetTitlesUpdatedIn(
 		time.Date(2013, 1, 1, 0, 0, 0, 0, jst),
 		time.Date(2013, 1, 31, 23, 59, 59, 0, jst),
 	)

@@ -33,7 +33,7 @@ func (client *Client) GetTitleByID(id string) (*Title, error) {
 	return titles[0], nil
 }
 
-func (client *Client) GetTitlesIn(from, to time.Time) ([]*Title, error) {
+func (client *Client) GetTitlesUpdatedIn(from, to time.Time) ([]*Title, error) {
 	return client.GetTitles(
 		"/db.php",
 		"Command",
@@ -59,7 +59,7 @@ func (client *Client) GetTitlesIn(from, to time.Time) ([]*Title, error) {
 	)
 }
 
-func (client *Client) GetTitlesBefore(to time.Time) ([]*Title, error) {
+func (client *Client) GetTitlesUpdatedBefore(to time.Time) ([]*Title, error) {
 	return client.GetTitles(
 		"/db.php",
 		"Command",
@@ -79,7 +79,7 @@ func (client *Client) GetTitlesBefore(to time.Time) ([]*Title, error) {
 	)
 }
 
-func (client *Client) GetTitlesAfter(from time.Time) ([]*Title, error) {
+func (client *Client) GetTitlesUpdatedAfter(from time.Time) ([]*Title, error) {
 	return client.GetTitles(
 		"/db.php",
 		"Command",
