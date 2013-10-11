@@ -65,3 +65,7 @@ Supported request examples:
 * GET http://cal.syoboi.jp/db.php?Command=TitleLookup&LastUpdate=:updatedFrom-&TID=*
 * GET http://cal.syoboi.jp/db.php?Command=TitleLookup&LastUpdate=:updatedFrom-:updatedTo&TID=*
 * GET http://cal.syoboi.jp/db.php?Command=TitleLookup&TID=:id
+* GET http://cal.syoboi.jp/db.php?Command=ChLookup&ChID=:id
+* GET http://cal.syoboi.jp/db.php?Command=ChLookup&LastUpdate=:updatedFrom-:updatedTo
+* GET http://cal.syoboi.jp/db.php?Command=ChLookup&LastUpdate=:updatedFrom-
+* GET http://cal.syoboi.jp/db.php?Command=ChLookup&LastUpdate=-:updatedTo
