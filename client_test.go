@@ -79,6 +79,30 @@ func (handler *testHandler) ServeHTTP(writer http.ResponseWriter, request *http.
 				</Result>
 			</ProgLookupResponse>`,
 		)
+	case "ChLookup":
+		fmt.Fprint(
+			writer,
+			`<?xml version="1.0" encoding="UTF-8"?>
+			<ChLookupResponse>
+				<ChItems>
+					<ChItem id="1">
+						<LastUpdate>2000-01-01 00:00:00</LastUpdate>
+						<ChID>1</ChID>
+						<ChName>ChName</ChName>
+						<ChiEPGName>ChiEPGName</ChiEPGName>
+						<ChURL>http://example.com</ChURL>
+						<ChEPGURL>http://example.com</ChEPGURL>
+						<ChComment>ChComment</ChComment>
+						<ChGID>1</ChGID>
+						<ChNumber>1</ChNumber>
+					</ChItem>
+				</ChItems>
+				<Result>
+					<Code>200</Code>
+					<Message/>
+				</Result>
+			</ChLookupResponse>`,
+		)
 	}
 }
 
@@ -269,6 +293,31 @@ func TestClient(t *testing.T) {
 					Equal,
 					"Command=ProgLookup&Count=1&JOIN=SubTitles",
 				)
+			})
+		})
+	})
+
+	Describe(t, "func (*Client) GetChannelByID(id string) (*Channel, error)", func() {
+		Context("with id", func() {
+			It("sends a GET request to /db.php?ChID=:id&Command=ChLookup", func() {
+				client.GetChannelByID("1")
+				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
+				Expect(currentRequest.URL.RawQuery).To(Equal, "ChID=1&Command=ChLookup")
+			})
+		})
+
+		Context("with valid response", func() {
+			It("returns a Channel", func() {
+				channel, _ := client.GetChannelByID("1")
+				Expect(channel.ChannelGroupID).To(Equal, "1")
+				Expect(channel.Comment).To(Equal, "ChComment")
+				Expect(channel.EPGURL).To(Equal, "http://example.com")
+				Expect(channel.ID).To(Equal, "1")
+				Expect(channel.IEPGName).To(Equal, "ChiEPGName")
+				Expect(channel.Name).To(Equal, "ChName")
+				Expect(channel.Number).To(Equal, "1")
+				Expect(channel.URL).To(Equal, "http://example.com")
+				Expect(channel.UpdatedAt).To(Equal, "2000-01-01 00:00:00")
 			})
 		})
 	})

@@ -43,6 +43,17 @@ func (client *Client) GetProgramByID(id string) (*Program, error) {
 	return programs[0], nil
 }
 
+func (client *Client) GetChannelByID(id string) (*Channel, error) {
+	channels, err := client.GetChannels("id", id)
+	if err != nil {
+		return nil, err
+	}
+	if len(channels) == 0 {
+		return nil, &NotFoundError{}
+	}
+	return channels[0], nil
+}
+
 func (client *Client) GetTitles(pairs ...string) ([]*Title, error) {
 	query, err := NewTitleQueryBuilder(pairs...).Build()
 	if err != nil {
@@ -65,6 +76,18 @@ func (client *Client) GetPrograms(pairs ...string) ([]*Program, error) {
 		return nil, err
 	}
 	return NewPrograms(data)
+}
+
+func (client *Client) GetChannels(pairs ...string) ([]*Channel, error) {
+	query, err := NewChannelQueryBuilder(pairs...).Build()
+	if err != nil {
+		return nil, err
+	}
+	data, err := client.Get("/db.php", query)
+	if err != nil {
+		return nil, err
+	}
+	return NewChannels(data)
 }
 
 func (client *Client) Get(path string, query string) ([]byte, error) {
