@@ -40,7 +40,7 @@ func (client *Client) GetProgramByID(id string) (*Program, error) {
 	if len(programs) == 0 {
 		return nil, &NotFoundError{}
 	}
-	return programs[0], err
+	return programs[0], nil
 }
 
 func (client *Client) GetTitles(pairs ...string) ([]*Title, error) {
