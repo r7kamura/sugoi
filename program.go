@@ -3,22 +3,22 @@ package sugoi
 import "encoding/xml"
 
 type Program struct {
-	ChannelID      string
-	Comment        string
-	Count          string
-	Deleted        string
-	EditedAt       string
-	Flag           string
-	ID             string
-	Item           string
-	JoinedSubTitle string
-	Revision       string
-	StartedAt      string
-	StartedOffset  string
-	SubTitle       string
-	TitleID        string
-	UpdatedAt      string
-	Warning        string
+	ChannelID      string `xml:"ChID"`
+	Comment        string `xml:"ProgItem"`
+	Count          string `xml:"Count"`
+	Deleted        string `xml:"Deleted"`
+	EditedAt       string `xml:"EdTime"`
+	Flag           string `xml:"Flag"`
+	ID             string `xml:"PID"`
+	Item           string `xml:"ProgComment"`
+	JoinedSubTitle string `xml:"STSubTitle"`
+	Revision       string `xml:"Revision"`
+	StartedAt      string `xml:"StTime"`
+	StartedOffset  string `xml:"StOffset"`
+	SubTitle       string `xml:"SubTitle"`
+	TitleID        string `xml:"TID"`
+	UpdatedAt      string `xml:"LastUpdate"`
+	Warning        string `xml:"Warn"`
 }
 
 func NewPrograms(data []byte) ([]*Program, error) {
@@ -38,26 +38,9 @@ func (parser *ProgramsParser) Parse() ([]*Program, error) {
 	if err != nil {
 		return nil, err
 	}
-	programs := make([]*Program, len(response.ProgramItems.ProgramItem))
-	for i, programItem := range response.ProgramItems.ProgramItem {
-		programs[i] = &Program{
-			ChannelID:      programItem.ChannelID,
-			Comment:        programItem.Comment,
-			Count:          programItem.Count,
-			Deleted:        programItem.Deleted,
-			EditedAt:       programItem.EditedAt,
-			Flag:           programItem.Flag,
-			ID:             programItem.ID,
-			Item:           programItem.Item,
-			JoinedSubTitle: programItem.JoinedSubTitle,
-			Revision:       programItem.Revision,
-			StartedAt:      programItem.StartedAt,
-			StartedOffset:  programItem.StartedOffset,
-			SubTitle:       programItem.SubTitle,
-			TitleID:        programItem.TitleID,
-			UpdatedAt:      programItem.UpdatedAt,
-			Warning:        programItem.Warning,
-		}
+	programs := make([]*Program, len(response.ProgramItems.Programs))
+	for i, program := range response.ProgramItems.Programs {
+		programs[i] = &program
 	}
 	return programs, err
 }
@@ -72,24 +55,5 @@ type programLookupResponse struct {
 }
 
 type programItems struct {
-	ProgramItem []programItem `xml:"ProgItem"`
-}
-
-type programItem struct {
-	ChannelID      string `xml:"ChID"`
-	Comment        string `xml:"ProgItem"`
-	Count          string `xml:"Count"`
-	Deleted        string `xml:"Deleted"`
-	EditedAt       string `xml:"EdTime"`
-	Flag           string `xml:"Flag"`
-	ID             string `xml:"PID"`
-	Item           string `xml:"ProgComment"`
-	JoinedSubTitle string `xml:"STSubTitle"`
-	Revision       string `xml:"Revision"`
-	StartedAt      string `xml:"StTime"`
-	StartedOffset  string `xml:"StOffset"`
-	SubTitle       string `xml:"SubTitle"`
-	TitleID        string `xml:"TID"`
-	UpdatedAt      string `xml:"LastUpdate"`
-	Warning        string `xml:"Warn"`
+	Programs []Program `xml:"ProgItem"`
 }
