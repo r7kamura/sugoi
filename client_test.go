@@ -321,4 +321,39 @@ func TestClient(t *testing.T) {
 			})
 		})
 	})
+
+	Describe(t, "func (*Client) GetChannels(...string) ([]*Channel, error)", func() {
+		Context("with updatedFrom and updatedTo", func() {
+			It("sends a GET request to /db.php?Command=ChLookup&LastUpdate=:updatedFrom-:updatedTo", func() {
+				client.GetChannels("updatedFrom", "2000-01-01T00:00:00+09:00", "updatedTo", "2000-01-02T00:00:00+09:00")
+				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ChLookup&LastUpdate=20000101_000000-20000102_000000",
+				)
+			})
+		})
+
+		Context("with updatedFrom", func() {
+			It("sends a GET request to /db.php?Command=ChLookup&LastUpdate=:updatedFrom-", func() {
+				client.GetChannels("updatedFrom", "2000-01-01T00:00:00+09:00")
+				Expect(currentRequest.URL.Path).To(Equal, "/db.php")
+				Expect(currentRequest.URL.RawQuery).To(
+					Equal,
+					"Command=ChLookup&LastUpdate=20000101_000000-",
+				)
+			})
+		})
+	})
+
+	Context("with updatedTo", func() {
+		It("sends a GET request to /db.php?Command=ChLookup&LastUpdate=-:updatedTo", func() {
+			client.GetChannels("updatedTo", "2000-01-02T00:00:00+09:00")
+			Expect(currentRequest.URL.Path).To(Equal, "/db.php")
+			Expect(currentRequest.URL.RawQuery).To(
+				Equal,
+				"Command=ChLookup&LastUpdate=-20000102_000000",
+			)
+		})
+	})
 }
